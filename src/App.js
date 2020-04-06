@@ -7,13 +7,27 @@ function App() {
     display: "inline-block",
     width: "50%",
     height: "100vh",
+    padding: "30px",
+    // fontSize: "16px",
   }
   return (
     <div className="main">
       <div className="input-box" style={{background: "gray", ...style}}>
-        input text here
+        <textarea
+          style={{
+            resize: "none",
+            width: "100%",
+            height: "100%",
+            background: "gray",
+            border: "none",
+            outline: "none",
+            fontSize: "inherit",
+          }}
+        >
+          input text here
+        </textarea>
       </div>
-      <div className="output-box" style={{background: "tomato", ...style}}>
+      <div className="output-box" style={{background: "tomato", verticalAlign: "top", ...style}}>
         output text here
       </div>
     </div>
