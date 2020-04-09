@@ -27,8 +27,8 @@ function App() {
         {/* Left top bar */}
         <div style={{background: "plum", justifyContent: "space-between", ...barStyle}}>
           placeholder left
-          <button style={{type: "button"}} onClick={() => 
-            fetch("https://822622ad.ngrok.io/", {
+          <button style={{type: "button"}} onClick={() =>
+            fetch("https://playground-jqd2vloq4a-uw.a.run.app", {
               method: 'POST',
               body: belCode,
           }).then(resp => resp.text()).then(setOutput)
