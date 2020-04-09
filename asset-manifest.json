@@ -1,23 +1,23 @@
 {
   "files": {
-    "main.css": "/chime-playground-frontend/static/css/main.d3e4e03d.chunk.css",
-    "main.js": "/chime-playground-frontend/static/js/main.0640e865.chunk.js",
-    "main.js.map": "/chime-playground-frontend/static/js/main.0640e865.chunk.js.map",
-    "runtime-main.js": "/chime-playground-frontend/static/js/runtime-main.dde7b1ff.js",
-    "runtime-main.js.map": "/chime-playground-frontend/static/js/runtime-main.dde7b1ff.js.map",
-    "static/js/2.1c6027b3.chunk.js": "/chime-playground-frontend/static/js/2.1c6027b3.chunk.js",
-    "static/js/2.1c6027b3.chunk.js.map": "/chime-playground-frontend/static/js/2.1c6027b3.chunk.js.map",
-    "index.html": "/chime-playground-frontend/index.html",
-    "precache-manifest.7a39193c3ef3751d3ace57b37ec25d8a.js": "/chime-playground-frontend/precache-manifest.7a39193c3ef3751d3ace57b37ec25d8a.js",
-    "service-worker.js": "/chime-playground-frontend/service-worker.js",
-    "static/css/main.d3e4e03d.chunk.css.map": "/chime-playground-frontend/static/css/main.d3e4e03d.chunk.css.map",
-    "static/js/2.1c6027b3.chunk.js.LICENSE.txt": "/chime-playground-frontend/static/js/2.1c6027b3.chunk.js.LICENSE.txt",
-    "static/media/logo.svg": "/chime-playground-frontend/static/media/logo.5d5d9eef.svg"
+    "main.css": "/static/css/main.d3e4e03d.chunk.css",
+    "main.js": "/static/js/main.25197e5d.chunk.js",
+    "main.js.map": "/static/js/main.25197e5d.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.e8b7488b.js",
+    "runtime-main.js.map": "/static/js/runtime-main.e8b7488b.js.map",
+    "static/js/2.1c6027b3.chunk.js": "/static/js/2.1c6027b3.chunk.js",
+    "static/js/2.1c6027b3.chunk.js.map": "/static/js/2.1c6027b3.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.702b5a5059c05519430779a08b2570d8.js": "/precache-manifest.702b5a5059c05519430779a08b2570d8.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/main.d3e4e03d.chunk.css.map": "/static/css/main.d3e4e03d.chunk.css.map",
+    "static/js/2.1c6027b3.chunk.js.LICENSE.txt": "/static/js/2.1c6027b3.chunk.js.LICENSE.txt",
+    "static/media/logo.svg": "/static/media/logo.5d5d9eef.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.dde7b1ff.js",
+    "static/js/runtime-main.e8b7488b.js",
     "static/js/2.1c6027b3.chunk.js",
     "static/css/main.d3e4e03d.chunk.css",
-    "static/js/main.0640e865.chunk.js"
+    "static/js/main.25197e5d.chunk.js"
   ]
 }
