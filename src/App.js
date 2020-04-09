@@ -3,41 +3,78 @@ import logo from './logo.svg';
 import './App.css';
 
 function App() {
-  const style = {
-    display: "inline-block",
+  const [belCode, setBelCode] = React.useState('(prn "Hello World!")')
+  const [output, setOutput] = React.useState("")
+
+  const panelStyle = {
+    display: "flex",
     width: "50%",
-    height: "100vh",
-    padding: "30px",
-    // fontSize: "16px",
+    flexDirection: "column",
+  }
+  const barStyle = {
+    height: "50px",
+    width: "100%",
+    display: "flex",
+  }
+  const bodyStyle = {
+    flexGrow: "1",
   }
   return (
-    <div className="main">
-      <div className="input-box" style={{background: "gray", ...style}}>
-        <textarea
-          style={{
-            resize: "none",
-            width: "100%",
-            height: "100%",
-            background: "gray",
-            border: "none",
-            outline: "none",
-            fontSize: "inherit",
-          }}
-        >
-          input text here
-        </textarea>
+    // Main container
+    <div style={{display: "flex", height: "100vh", width: "100vw"}}>
+      {/* Left panel */}
+      <div style={panelStyle}>
+        {/* Left top bar */}
+        <div style={{background: "plum", justifyContent: "space-between", ...barStyle}}>
+          placeholder left
+          <button style={{type: "button"}} onClick={() => 
+            fetch("https://822622ad.ngrok.io/", {
+              method: 'POST',
+              body: belCode,
+          }).then(resp => resp.text()).then(setOutput)
+          }>
+            submit
+          </button>
+        </div>
+
+        {/* Left body */}
+        <div style={{background: "gray", ...bodyStyle}}>
+          <textarea
+            value={belCode}
+            onChange={event => setBelCode(event.target.value)}
+            style={{
+              resize: "none",
+              width: "100%",
+              flexGrow: "1",
+              background: "gray",
+              border: "none",
+              outline: "none",
+              fontSize: "inherit",
+              padding: "30px",
+            }}
+          >
+            input text here
+          </textarea>
+        </div>
       </div>
-      <div className="output-box" style={{background: "tomato", verticalAlign: "top", ...style}}>
-        output text here
+
+      {/* Right panel */}
+      <div style={panelStyle}>
+        {/* Right top bar */}
+        <div style={{background: "cyan", ...barStyle}}>
+          placeholder right
+        </div>
+
+        {/* Right body */}
+        <div style={{background: "tomato", ...bodyStyle}}>
+          {/* Output window */}
+          <div style={{padding: "30px"}}>
+            {output}
+          </div>
+        </div>
       </div>
     </div>
   );
-}
-
-function Hello() {
-  return (
-    <p>hello</p>
-  )
 }
 
 export default App;
