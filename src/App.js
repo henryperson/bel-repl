@@ -1,10 +1,19 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 function App() {
   const [belCode, setBelCode] = React.useState('(prn "Hello World!")')
-  const [output, setOutput] = React.useState("")
+  const [{output, replInput, requestOutstanding}, setCombinedState] = React.useState({
+    output: [],
+    replInput: "",
+    requestOutstanding: false,
+  })
+  const replInputField = React.useRef(null)
+  React.useEffect(() => {
+    if (!requestOutstanding) {
+      replInputField.current.focus()
+    }
+  }, [requestOutstanding])
 
   const panelStyle = {
     display: "flex",
@@ -27,12 +36,27 @@ function App() {
         {/* Left top bar */}
         <div style={{background: "plum", justifyContent: "space-between", ...barStyle}}>
           placeholder left
-          <button style={{type: "button"}} onClick={() =>
-            fetch("https://playground-jqd2vloq4a-uw.a.run.app", {
-              method: 'POST',
-              body: belCode,
-          }).then(resp => resp.text()).then(setOutput)
-          }>
+          <button
+            style={{type: "button"}}
+            onClick={() => {
+              setCombinedState(({output}) => ({
+                replInput: "",
+                requestOutstanding: true,
+                output,
+              }))
+              fetch("https://playground-jqd2vloq4a-uw.a.run.app/stateful", {
+                method: 'POST',
+                body: JSON.stringify({
+                  expr: belCode,
+                  state: "",
+                }),
+              }).then(resp => resp.json()).then(({result}) => setCombinedState({
+                output: [{type: "output", text: result}],
+                replInput: "",
+                requestOutstanding: false,
+              }))
+            }}
+          >
             submit
           </button>
         </div>
@@ -41,7 +65,7 @@ function App() {
         <div style={{background: "gray", ...bodyStyle}}>
           <textarea
             value={belCode}
-            onChange={event => setBelCode(event.target.value)}
+            onChange={(event) => setBelCode(event.target.value)}
             style={{
               resize: "none",
               width: "100%",
@@ -69,7 +93,63 @@ function App() {
         <div style={{background: "tomato", ...bodyStyle}}>
           {/* Output window */}
           <div style={{padding: "30px"}}>
-            {output}
+            {output.map(({type, text}, index) => {
+              switch (type) {
+                case "input":
+                  return <div key={index}>> {text}</div>
+                case "output":
+                  return <div key={index}>{text}</div>
+              }
+            })}
+            <div style={{display: "flex"}}>
+              {requestOutstanding ? null : <>
+                >&nbsp; <textarea
+                    rows="1"
+                    value={replInput}
+                    ref={replInputField}
+                    onChange={(event) => {
+                      // https://stackoverflow.com/a/44708693
+                      const value = event.target.value
+                      setCombinedState((currentState) => ({
+                        ...currentState,
+                        replInput: value,
+                      })
+                    )}}
+                    onKeyDown={(event) => {
+                      if (event.keyCode == 13) {
+                        event.preventDefault()
+                        setCombinedState(({output}) => ({
+                          output: [...output,  {type: "input", text: replInput}],
+                          replInput: "",
+                          requestOutstanding: true,
+                        }))
+                        fetch("https://playground-jqd2vloq4a-uw.a.run.app/stateful", {
+                          method: 'POST',
+                          body: JSON.stringify({
+                            expr: replInput,
+                            state: "",
+                          })
+                        })
+                        .then((resp) => resp.json())
+                        .then(({result}) => setCombinedState(({output}) => ({
+                          output: [...output, {type: "output", text: result}],
+                          requestOutstanding: false,
+                          replInput: "",
+                        })))
+                      }
+                    }}
+                    style={{
+                      flex: "1",
+                      background: "tomato",
+                      border: "none",
+                      outline: "none",
+                      resize: "none",
+                      fontSize: "inherit",
+                      padding: "0",
+                    }}
+                ></textarea>
+              </>}
+            </div>
           </div>
         </div>
       </div>
