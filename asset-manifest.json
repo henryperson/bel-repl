@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.css": "/chime-playground-frontend/static/css/main.d3e4e03d.chunk.css",
-    "main.js": "/chime-playground-frontend/static/js/main.823d1407.chunk.js",
-    "main.js.map": "/chime-playground-frontend/static/js/main.823d1407.chunk.js.map",
-    "runtime-main.js": "/chime-playground-frontend/static/js/runtime-main.dde7b1ff.js",
-    "runtime-main.js.map": "/chime-playground-frontend/static/js/runtime-main.dde7b1ff.js.map",
-    "static/js/2.cc971216.chunk.js": "/chime-playground-frontend/static/js/2.cc971216.chunk.js",
-    "static/js/2.cc971216.chunk.js.map": "/chime-playground-frontend/static/js/2.cc971216.chunk.js.map",
-    "index.html": "/chime-playground-frontend/index.html",
-    "precache-manifest.0e2175d7c7b88fc3ad0a32908e77cc56.js": "/chime-playground-frontend/precache-manifest.0e2175d7c7b88fc3ad0a32908e77cc56.js",
-    "service-worker.js": "/chime-playground-frontend/service-worker.js",
-    "static/css/main.d3e4e03d.chunk.css.map": "/chime-playground-frontend/static/css/main.d3e4e03d.chunk.css.map",
-    "static/js/2.cc971216.chunk.js.LICENSE.txt": "/chime-playground-frontend/static/js/2.cc971216.chunk.js.LICENSE.txt"
+    "main.css": "/static/css/main.d3e4e03d.chunk.css",
+    "main.js": "/static/js/main.bc0bffdd.chunk.js",
+    "main.js.map": "/static/js/main.bc0bffdd.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.e8b7488b.js",
+    "runtime-main.js.map": "/static/js/runtime-main.e8b7488b.js.map",
+    "static/js/2.cc971216.chunk.js": "/static/js/2.cc971216.chunk.js",
+    "static/js/2.cc971216.chunk.js.map": "/static/js/2.cc971216.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.b7eeb36d4971ccbefc1c02f9d8f9a982.js": "/precache-manifest.b7eeb36d4971ccbefc1c02f9d8f9a982.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/main.d3e4e03d.chunk.css.map": "/static/css/main.d3e4e03d.chunk.css.map",
+    "static/js/2.cc971216.chunk.js.LICENSE.txt": "/static/js/2.cc971216.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.dde7b1ff.js",
+    "static/js/runtime-main.e8b7488b.js",
     "static/js/2.cc971216.chunk.js",
     "static/css/main.d3e4e03d.chunk.css",
-    "static/js/main.823d1407.chunk.js"
+    "static/js/main.bc0bffdd.chunk.js"
   ]
 }
