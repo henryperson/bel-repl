@@ -1,6 +1,8 @@
 import React from 'react';
 import './App.css';
 
+const endpoint = 'https://repl-api.bel-chime.com/stateful'
+
 function App() {
   const [belCode, setBelCode] = React.useState('(prn "Hello World!")')
   const [{output, replInput, requestOutstanding}, setCombinedState] = React.useState({
@@ -44,7 +46,7 @@ function App() {
                 requestOutstanding: true,
                 output,
               }))
-              fetch("https://playground-jqd2vloq4a-uw.a.run.app/stateful", {
+              fetch(endpoint, {
                 method: 'POST',
                 body: JSON.stringify({
                   expr: belCode,
@@ -123,7 +125,7 @@ function App() {
                           replInput: "",
                           requestOutstanding: true,
                         }))
-                        fetch("https://playground-jqd2vloq4a-uw.a.run.app/stateful", {
+                        fetch(endpoint, {
                           method: 'POST',
                           body: JSON.stringify({
                             expr: replInput,
