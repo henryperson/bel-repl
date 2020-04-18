@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "5028fb97789212a3f55bd0b46d935506",
+    "revision": "546515f74a869c169983f965782aa575",
     "url": "/chime-playground-frontend/index.html"
   },
   {
-    "revision": "348128e46f5089a6afeb",
+    "revision": "dd24509e81b6ef7e29dc",
     "url": "/chime-playground-frontend/static/css/main.d3e4e03d.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/chime-playground-frontend/static/js/2.cc971216.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "348128e46f5089a6afeb",
-    "url": "/chime-playground-frontend/static/js/main.44027db8.chunk.js"
+    "revision": "dd24509e81b6ef7e29dc",
+    "url": "/chime-playground-frontend/static/js/main.823d1407.chunk.js"
   },
   {
     "revision": "cbb8db7c111fa20413df",
