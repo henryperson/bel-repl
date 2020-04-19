@@ -1,14 +1,15 @@
 import React from 'react';
 import './App.css';
 
-const endpoint = 'https://repl-api.bel-chime.com/stateful'
+const endpoint = 'https://repl-api.bel-chime.com/stateful-long'
 
 function App() {
   const [belCode, setBelCode] = React.useState('(prn "Hello World!")')
-  const [{output, replInput, requestOutstanding}, setCombinedState] = React.useState({
+  const [{output, replInput, requestOutstanding, replState}, setCombinedState] = React.useState({
     output: [],
     replInput: "",
     requestOutstanding: false,
+    replState: "",
   })
   const replInputField = React.useRef(null)
   React.useEffect(() => {
@@ -38,6 +39,7 @@ function App() {
         {/* Left top bar */}
         <div style={{background: "plum", justifyContent: "space-between", ...barStyle}}>
           placeholder left
+          {/* Submit button */}
           <button
             style={{type: "button"}}
             onClick={() => {
@@ -52,10 +54,11 @@ function App() {
                   expr: belCode,
                   state: "",
                 }),
-              }).then(resp => resp.json()).then(({result}) => setCombinedState({
+              }).then(resp => resp.json()).then(({result, state}) => setCombinedState({
                 output: [{type: "output", text: result}],
                 replInput: "",
                 requestOutstanding: false,
+                replState: state,
               }))
             }}
           >
@@ -129,14 +132,15 @@ function App() {
                           method: 'POST',
                           body: JSON.stringify({
                             expr: replInput,
-                            state: "",
+                            state: replState,
                           })
                         })
                         .then((resp) => resp.json())
-                        .then(({result}) => setCombinedState(({output}) => ({
+                        .then(({result, state}) => setCombinedState(({output}) => ({
                           output: [...output, {type: "output", text: result}],
                           requestOutstanding: false,
                           replInput: "",
+                          replState: state,
                         })))
                       }
                     }}
