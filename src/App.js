@@ -146,7 +146,7 @@ function App() {
               padding: "15px",
               color: "inherit",
             }}
-            spellcheck="false"
+            spellCheck="false"
           >
           </textarea>
         </div>
@@ -187,7 +187,7 @@ function App() {
                       })
                     )}}
                     onKeyDown={(event) => {
-                      if (event.keyCode == 13) {
+                      if (event.keyCode === 13) {
                         event.preventDefault()
                         setCombinedState(({output}) => ({
                           output: [...output,  {type: "input", text: replInput}],
@@ -220,7 +220,7 @@ function App() {
                       padding: "0",
                       color: "inherit",
                     }}
-                    spellcheck="false"
+                    spellCheck="false"
                 ></textarea>
               </>}
             </div>
