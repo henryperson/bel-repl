@@ -162,7 +162,7 @@ function App() {
         {/* Right body */}
         <div style={{background: solarized.dark.bg, ...style.body}}>
           {/* Output window */}
-          <div style={{padding: "15px"}}>
+          <div style={{padding: "15px", width: "100%"}}>
             {output.map(({type, text}, index) => {
               switch (type) {
                 case "input":
