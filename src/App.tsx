@@ -60,7 +60,7 @@ const style = {
   },
   panel: {
     display: "flex",
-    width: "50%",
+    flex: 1,
     flexDirection: "column",
   },
   body: {
@@ -79,6 +79,28 @@ function assertNever(x: never): never {
   throw new Error("Unexpected object: " + x);
 }
 
+// Adapted from https://usehooks.com/useWindowSize/
+function useWindowSize() {
+  function getSize() {
+    return {
+      width: window.innerWidth,
+      height: window.innerHeight,
+    }
+  }
+
+  const [windowSize, setWindowSize] = React.useState(getSize)
+
+  React.useEffect(() => {
+    function handleResize() {
+      setWindowSize(getSize())
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, []) // Empty array ensures that effect is only run on mount and unmount
+
+  return windowSize
+}
+
 function App() {
   const [belCode, setBelCode] = React.useState('(prn "Hello World!")')
   const [{output, replInput, requestOutstanding, replState}, setCombinedState] = React.useState({
@@ -93,10 +115,18 @@ function App() {
       replInputField.current?.focus()
     }
   }, [replInputField, requestOutstanding])
+  const windowSize = useWindowSize()
 
   return (
     // Main container
-    <div style={{display: "flex", height: "100vh", width: "100vw"}}>
+    <div
+      style={{
+        display: "flex",
+        height: "100vh",
+        width: "100vw",
+        flexDirection: windowSize.width > windowSize.height ? "row" : "column",
+      }}
+    >
       {/* Left panel */}
       <div style={{color: solarized.light.fg, ...style.panel}}>
         {/* Left top bar */}
