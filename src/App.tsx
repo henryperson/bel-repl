@@ -166,7 +166,7 @@ function App() {
         </div>
 
         {/* Left body */}
-        <div style={style.body}>
+        <div style={{background: solarized.light.bg, ...style.body}}>
           {/* Text editor */}
           <textarea
             value={belCode}
@@ -174,14 +174,14 @@ function App() {
             style={{
               resize: "none",
               width: "100%",
-              height: "100%",
+              margin: 0,
               flexGrow: 1,
-              background: solarized.light.bg,
               border: "none",
               outline: "none",
               fontSize: "inherit",
               padding: "15px",
               color: "inherit",
+              backgroundColor: "inherit",
             }}
             spellCheck="false"
           >
@@ -211,7 +211,7 @@ function App() {
               }
             })}
             {/* Repl */}
-            <div style={{display: "flex"}}>
+            <div style={{display: "flex", alignItems: "center"}}>
               {requestOutstanding ? null : <>
                 >&nbsp; <textarea
                     rows={1}
@@ -259,6 +259,7 @@ function App() {
                       fontSize: "inherit",
                       padding: "0",
                       color: "inherit",
+                      margin: 0,
                     }}
                     spellCheck="false"
                 ></textarea>
