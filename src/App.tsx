@@ -7,7 +7,7 @@ const endpoint = 'https://repl-api.bel-chime.com/stateful-long'
 
 // Solarized theme from: https://ethanschoonover.com/solarized/
 // Colors taken from: https://github.com/thomasf/solarized-css/blob/master/src/solarized-css/partials/solarized-colors.styl
-let solarized = {
+const colors = {
   base03: "#002b36",
   base02: "#073642",
   base01: "#586e75",
@@ -27,23 +27,25 @@ let solarized = {
   green: "#859900",
 }
 
-solarized = Object.assign(solarized, {
+const solarized = {
   light: {
-    fg: solarized.base00,
-    bg: solarized.base3,
-    hl: solarized.base2,
-    emph: solarized.base01,
-    comment: solarized.base1,
+    fg: colors.base00,
+    bg: colors.base3,
+    hl: colors.base2,
+    emph: colors.base01,
+    comment: colors.base1,
   },
 
   dark: {
-    fg: solarized.base0,
-    bg: solarized.base03,
-    hl: solarized.base02,
-    emph: solarized.base1,
-    comment: solarized.base01,
+    fg: colors.base0,
+    bg: colors.base03,
+    hl: colors.base02,
+    emph: colors.base1,
+    comment: colors.base01,
   },
-})
+
+  ...colors,
+}
 
 const style = {
   bar: {
@@ -62,31 +64,35 @@ const style = {
     flexDirection: "column",
   },
   body: {
-    flexGrow: "1",
+    flexGrow: 1,
     fontFamily: 'Monaco, Menlo, "Courier New", monospace',
     fontSize: "14px",
     display: "flex",
   },
+} as {[name: string]: React.CSSProperties}
+
+function Space(dims: {width?: string, height?: string}) {
+  return <div style={dims} />
 }
 
-function Space({width, height}) {
-  return <div style={{width, height}}/>
+function assertNever(x: never): never {
+  throw new Error("Unexpected object: " + x);
 }
 
 function App() {
   const [belCode, setBelCode] = React.useState('(prn "Hello World!")')
   const [{output, replInput, requestOutstanding, replState}, setCombinedState] = React.useState({
-    output: [],
+    output: [] as {type: "input" | "output", text: string}[],
     replInput: "",
     requestOutstanding: false,
     replState: "",
   })
-  const replInputField = React.useRef(null)
+  const replInputField = React.useRef(null) as React.RefObject<HTMLTextAreaElement>
   React.useEffect(() => {
     if (!requestOutstanding) {
-      replInputField.current.focus()
+      replInputField.current?.focus()
     }
-  }, [requestOutstanding])
+  }, [replInputField, requestOutstanding])
 
   return (
     // Main container
@@ -109,6 +115,7 @@ function App() {
                 replInput: "",
                 requestOutstanding: true,
                 output,
+                replState,
               }))
               fetch(endpoint, {
                 method: 'POST',
@@ -138,7 +145,7 @@ function App() {
               resize: "none",
               width: "100%",
               height: "100%",
-              flexGrow: "1",
+              flexGrow: 1,
               background: solarized.light.bg,
               border: "none",
               outline: "none",
@@ -169,13 +176,15 @@ function App() {
                   return <div key={index}>> {text}</div>
                 case "output":
                   return <div key={index}>{text}</div>
+                default:
+                  return assertNever(type)
               }
             })}
             {/* Repl */}
             <div style={{display: "flex"}}>
               {requestOutstanding ? null : <>
                 >&nbsp; <textarea
-                    rows="1"
+                    rows={1}
                     value={replInput}
                     ref={replInputField}
                     onChange={(event) => {
@@ -193,6 +202,7 @@ function App() {
                           output: [...output,  {type: "input", text: replInput}],
                           replInput: "",
                           requestOutstanding: true,
+                          replState: "",
                         }))
                         fetch(endpoint, {
                           method: 'POST',
