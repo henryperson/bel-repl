@@ -102,7 +102,7 @@ function useWindowSize() {
 }
 
 function App() {
-  const [belCode, setBelCode] = React.useState('(prn "Hello World!")')
+  const [belCode, setBelCode] = React.useState("(cons 'hello 'world)")
   const [{output, replInput, requestOutstanding, replState}, setCombinedState] = React.useState({
     output: [] as {type: "input" | "output", text: string}[],
     replInput: "",
