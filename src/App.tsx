@@ -205,7 +205,7 @@ function App() {
                 case "input":
                   return <div key={index}>> {text}</div>
                 case "output":
-                  return <div key={index}>{text}</div>
+                  return <pre style={{marginTop: 0}} key={index}>{text}</pre>
                 default:
                   return assertNever(type)
               }
