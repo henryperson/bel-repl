@@ -3,7 +3,7 @@ import './App.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlay } from '@fortawesome/free-solid-svg-icons'
 
-const endpoint = 'https://repl-api.bel-chime.com/stateful-long'
+const api = 'https://repl-api.bel-chime.com'
 
 // Solarized theme from: https://ethanschoonover.com/solarized/
 // Colors taken from: https://github.com/thomasf/solarized-css/blob/master/src/solarized-css/partials/solarized-colors.styl
@@ -147,7 +147,7 @@ function App() {
                 output,
                 replState,
               }))
-              fetch(endpoint, {
+              fetch(`${api}/stateful-long`, {
                 method: 'POST',
                 body: JSON.stringify({
                   expr: belCode,
@@ -234,7 +234,7 @@ function App() {
                           requestOutstanding: true,
                           replState: "",
                         }))
-                        fetch(endpoint, {
+                        fetch(`${api}/stateful`, {
                           method: 'POST',
                           body: JSON.stringify({
                             expr: replInput,
