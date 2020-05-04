@@ -101,8 +101,17 @@ function useWindowSize() {
   return windowSize
 }
 
+function getP() {
+  return new URLSearchParams(document.location.search).get("p")
+}
+
+const shareID = getP()
+
+const cachedPrograms = {} as {[key: string]: string}
+
 function App() {
-  const [belCode, setBelCode] = React.useState("(cons 'hello 'world)")
+  const [[belCode, pristine], setBelCode] = React.useState(
+    shareID ? ["", true] : ["(cons 'hello 'world)", false])
   const [{output, replInput, requestOutstanding, replState}, setCombinedState] = React.useState({
     output: [] as {type: "input" | "output", text: string}[],
     replInput: "",
@@ -115,6 +124,30 @@ function App() {
       replInputField.current?.focus()
     }
   }, [replInputField, requestOutstanding])
+  React.useEffect(() => {
+    if (shareID) {
+      fetch(`https://storage.googleapis.com/download/storage/v1/b/chime-snippets/o/${shareID}?alt=media`)
+        .then(resp => resp.text())
+        .then(code => {
+          cachedPrograms[shareID] = code
+          setBelCode([code, true])
+        })
+    }
+    window.addEventListener("popstate", _ => {
+      const p = getP()
+      if (p) {
+        const code = cachedPrograms[p]
+        if (code !== undefined) {
+          setBelCode([code, true])
+        }
+      }
+    })
+  }, [])
+  React.useEffect(() => {
+    if (!pristine) {
+      window.history.pushState(null, '', '/')
+    }
+  }, [pristine])
   const windowSize = useWindowSize()
 
   return (
@@ -132,36 +165,59 @@ function App() {
         {/* Left top bar */}
         <div style={{background: solarized.light.hl, justifyContent: "space-between", ...style.bar}}>
           <span style={style.barTitle}>editor</span>
-          {/* Submit button */}
-          <div
-            style={{
-              textTransform: "uppercase",
-              display: "flex",
-              alignItems: "center",
-              cursor: "pointer",
-            }}
-            onClick={() => {
-              setCombinedState(({output}) => ({
-                replInput: "",
-                requestOutstanding: true,
-                output,
-                replState,
-              }))
-              fetch(`${api}/stateful-long`, {
-                method: 'POST',
-                body: JSON.stringify({
-                  expr: belCode,
-                  state: "",
-                }),
-              }).then(resp => resp.json()).then(({result, state}) => setCombinedState({
-                output: [{type: "output", text: result}],
-                replInput: "",
-                requestOutstanding: false,
-                replState: state,
-              }))
-            }}
-          >
-            run <Space width="7px"/><FontAwesomeIcon style={{fontSize: "small"}} icon={faPlay} />
+          {/* Buttons */}
+          <div style={{display: "flex"}}>
+            {/* Share */}
+            <div
+              style={{
+                textTransform: "uppercase",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                fetch(`${api}/share`, {
+                  method: 'POST',
+                  body: belCode,
+                }).then(resp => resp.json()).then(({share_id}) => {
+                  cachedPrograms[share_id] = belCode
+                  window.history.pushState(null, '', `/?p=${share_id}`)
+                  setBelCode([belCode, true])
+                })
+              }}
+            >
+              share
+            </div>
+            <Space width="15px"/>
+            {/* Run */}
+            <div
+              style={{
+                textTransform: "uppercase",
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                setCombinedState(({output}) => ({
+                  replInput: "",
+                  requestOutstanding: true,
+                  output,
+                  replState,
+                }))
+                fetch(`${api}/stateful-long`, {
+                  method: 'POST',
+                  body: JSON.stringify({
+                    expr: belCode,
+                    state: "",
+                  }),
+                }).then(resp => resp.json()).then(({result, state}) => setCombinedState({
+                  output: [{type: "output", text: result}],
+                  replInput: "",
+                  requestOutstanding: false,
+                  replState: state,
+                }))
+              }}
+            >
+              run <Space width="7px"/><FontAwesomeIcon style={{fontSize: "small"}} icon={faPlay} />
+            </div>
           </div>
         </div>
 
@@ -170,7 +226,9 @@ function App() {
           {/* Text editor */}
           <textarea
             value={belCode}
-            onChange={(event) => setBelCode(event.target.value)}
+            onChange={(event) => {
+              setBelCode([event.target.value, false])
+            }}
             style={{
               resize: "none",
               width: "100%",
