@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import examples from './Examples'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlay } from '@fortawesome/free-solid-svg-icons'
 
@@ -69,6 +70,10 @@ const style = {
     fontSize: "14px",
     display: "flex",
   },
+  button: {
+    textTransform: "uppercase",
+    cursor: "pointer",
+  }
 } as {[name: string]: React.CSSProperties}
 
 function Space(dims: {width?: string, height?: string}) {
@@ -101,6 +106,37 @@ function useWindowSize() {
   return windowSize
 }
 
+// Copied from https://usehooks.com/useOnClickOutside/
+function useOnClickOutside(ref, handler) {
+  React.useEffect(
+    () => {
+      const listener = event => {
+        // Do nothing if clicking ref's element or descendent elements
+        if (!ref.current || ref.current.contains(event.target)) {
+          return;
+        }
+
+        handler(event);
+      };
+
+      document.addEventListener('mousedown', listener);
+      document.addEventListener('touchstart', listener);
+
+      return () => {
+        document.removeEventListener('mousedown', listener);
+        document.removeEventListener('touchstart', listener);
+      };
+    },
+    // Add ref and handler to effect dependencies
+    // It's worth noting that because passed in handler is a new ...
+    // ... function on every render that will cause this effect ...
+    // ... callback/cleanup to run every render. It's not a big deal ...
+    // ... but to optimize you can wrap handler in useCallback before ...
+    // ... passing it into this hook.
+    [ref, handler]
+  );
+}
+
 function getP() {
   return new URLSearchParams(document.location.search).get("p")
 }
@@ -118,12 +154,17 @@ function App() {
     requestOutstanding: false,
     replState: "",
   })
-  const replInputField = React.useRef(null) as React.RefObject<HTMLTextAreaElement>
+  const [showExamplesDiv, setShowExamplesDiv] = React.useState(false)
+
+  const replInputField = React.useRef() as React.RefObject<HTMLTextAreaElement>
   React.useEffect(() => {
     if (!requestOutstanding) {
       replInputField.current?.focus()
     }
   }, [replInputField, requestOutstanding])
+  const examplesDropdown = React.useRef() as React.RefObject<HTMLDivElement>
+  useOnClickOutside(examplesDropdown, () => {setShowExamplesDiv(false)})
+
   React.useEffect(() => {
     if (shareID) {
       fetch(`https://storage.googleapis.com/download/storage/v1/b/chime-snippets/o/${shareID}?alt=media`)
@@ -150,6 +191,9 @@ function App() {
   }, [pristine])
   const windowSize = useWindowSize()
 
+  let locals = {} as any
+  const setLocal = (varName: string, val: any) => (locals[varName] = val) && null
+
   return (
     // Main container
     <div
@@ -167,6 +211,7 @@ function App() {
           <span style={style.barTitle}>editor</span>
           {/* Buttons */}
           <div style={{display: "flex"}}>
+            {setLocal("buttonWidth", "25px")}
             {/* Share */}
             <div
               style={{
@@ -186,14 +231,60 @@ function App() {
             >
               share
             </div>
-            <Space width="15px"/>
+            <Space width={locals.buttonWidth}/>
+            {/* Examples */}
+            <div
+              style={{display: "flex", flexDirection: "column", alignItems: "center"}}
+              ref={examplesDropdown}
+            >
+              <div
+                style={style.button}
+                onClick={() => {
+                  setShowExamplesDiv(!showExamplesDiv)
+                }}
+              >
+                examples
+              </div>
+              {showExamplesDiv &&
+              <div style={{
+                position: "absolute",
+                textTransform: "none",
+                top: style.bar.height,
+                background: "white",
+                display: "flex",
+                flexDirection: "column",
+                border: `1px solid ${solarized.light.fg}`,
+                borderRadius: "2px",
+              }}>
+                {examples.map(({title, code}, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      height: "45px",
+                      width: "150px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderBottom: i !== examples.length-1 ? `1px solid ${solarized.light.fg}` : "",
+                      cursor: "pointer",
+                    }}
+                    onClick= {() => {
+                      setBelCode([code, false])
+                    }}
+                  >
+                    {title}
+                  </div>
+                ))}
+              </div>
+              }
+            </div>
+            <Space width={locals.buttonWidth}/>
             {/* Run */}
             <div
               style={{
-                textTransform: "uppercase",
                 display: "flex",
                 alignItems: "center",
-                cursor: "pointer",
+                ...style.button,
               }}
               onClick={() => {
                 setCombinedState(({output}) => ({
@@ -219,6 +310,7 @@ function App() {
               run <Space width="7px"/><FontAwesomeIcon style={{fontSize: "small"}} icon={faPlay} />
             </div>
           </div>
+
         </div>
 
         {/* Left body */}
