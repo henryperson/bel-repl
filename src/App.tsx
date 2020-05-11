@@ -147,7 +147,7 @@ const cachedPrograms = {} as {[key: string]: string}
 
 function App() {
   const [[belCode, pristine], setBelCode] = React.useState(
-    shareID ? ["", true] : ["(cons 'hello 'world)", false])
+    shareID ? ["", true] : [examples[0].code, false])
   const [{output, replInput, requestOutstanding, replState}, setCombinedState] = React.useState({
     output: [] as {type: "input" | "output", text: string}[],
     replInput: "",

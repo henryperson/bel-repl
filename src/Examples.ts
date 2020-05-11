@@ -1,5 +1,9 @@
 export default [
     {
+      title: "hello world",
+      code: "(cons 'hello 'world)",
+    },
+    {
       title: "fibonacci",
       code:
 `(def fib (n)
