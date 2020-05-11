@@ -267,6 +267,10 @@ function App() {
                       justifyContent: "center",
                       borderBottom: i !== examples.length-1 ? `1px solid ${solarized.light.fg}` : "",
                       cursor: "pointer",
+                      ...(code === belCode ? {
+                        color: solarized.light.comment,
+                        cursor: "default",
+                      } : {})
                     }}
                     onClick= {() => {
                       setBelCode([code, false])
