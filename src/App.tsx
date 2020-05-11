@@ -163,7 +163,7 @@ function App() {
     }
   }, [replInputField, requestOutstanding])
   const examplesDropdown = React.useRef() as React.RefObject<HTMLDivElement>
-  useOnClickOutside(examplesDropdown, () => {setShowExamplesDiv(false)})
+  useOnClickOutside(examplesDropdown, () => setShowExamplesDiv(false))
 
   React.useEffect(() => {
     if (shareID) {
