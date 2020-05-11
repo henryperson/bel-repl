@@ -268,7 +268,7 @@ function App() {
                       borderBottom: i !== examples.length-1 ? `1px solid ${solarized.light.fg}` : "",
                       cursor: "pointer",
                       ...(code === belCode ? {
-                        color: solarized.light.comment,
+                        fontWeight: "bold",
                         cursor: "default",
                       } : {})
                     }}
