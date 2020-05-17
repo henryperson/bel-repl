@@ -70,11 +70,14 @@ const style = {
     fontSize: "14px",
     display: "flex",
   },
-  button: {
+  button: isHovered => ({
     textTransform: "uppercase",
     cursor: "pointer",
-  }
-} as {[name: string]: React.CSSProperties}
+    padding: "9px",
+    borderRadius: "3px",
+    background: isHovered ? "#dfdac7" : "",
+  }),
+} as any
 
 function Space(dims: {width?: string, height?: string}) {
   return <div style={dims} />
@@ -137,6 +140,34 @@ function useOnClickOutside(ref, handler) {
   );
 }
 
+// Copied from https://usehooks.com/useHover/
+function useHover(): [React.RefObject<HTMLDivElement>, boolean] {
+  const [value, setValue] = React.useState(false);
+
+  const ref = React.useRef() as React.RefObject<HTMLDivElement>;
+
+  const handleMouseOver = () => setValue(true);
+  const handleMouseOut = () => setValue(false);
+
+  React.useEffect(
+    () => {
+      const node = ref.current;
+      if (node) {
+        node.addEventListener('mouseover', handleMouseOver);
+        node.addEventListener('mouseout', handleMouseOut);
+
+        return () => {
+          node.removeEventListener('mouseover', handleMouseOver);
+          node.removeEventListener('mouseout', handleMouseOut);
+        };
+      }
+    },
+    [ref.current] // Recall only if ref changes
+  );
+
+  return [ref, value];
+}
+
 function getP() {
   return new URLSearchParams(document.location.search).get("p")
 }
@@ -155,6 +186,9 @@ function App() {
     replState: "",
   })
   const [showExamplesDiv, setShowExamplesDiv] = React.useState(false)
+  const [shareButton, shareHovered] = useHover()
+  const [runButton, runHovered] = useHover()
+  const [examplesButton, examplesHovered] = useHover()
 
   const replInputField = React.useRef() as React.RefObject<HTMLTextAreaElement>
   React.useEffect(() => {
@@ -214,10 +248,8 @@ function App() {
             {setLocal("buttonWidth", "25px")}
             {/* Share */}
             <div
-              style={{
-                textTransform: "uppercase",
-                cursor: "pointer",
-              }}
+              style={style.button(shareHovered)}
+              ref={shareButton}
               onClick={() => {
                 fetch(`${api}/share`, {
                   method: 'POST',
@@ -238,7 +270,8 @@ function App() {
               ref={examplesDropdown}
             >
               <div
-                style={style.button}
+                style={style.button(examplesHovered)}
+                ref={examplesButton}
                 onClick={() => {
                   setShowExamplesDiv(!showExamplesDiv)
                 }}
@@ -288,8 +321,9 @@ function App() {
               style={{
                 display: "flex",
                 alignItems: "center",
-                ...style.button,
+                ...style.button(runHovered),
               }}
+              ref={runButton}
               onClick={() => {
                 setCombinedState(({output}) => ({
                   replInput: "",
