@@ -10,3 +10,13 @@ html {
 * {
   font-family: inherit;
 }
+
+.react-codemirror2 {
+  width: 100%;
+  flex-grow: 1;
+}
+
+.CodeMirror {
+  height: 100%;
+  background: #fdf6e3; /* solarized.light.bg */
+}

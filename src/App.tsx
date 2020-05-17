@@ -1,8 +1,12 @@
-import React from 'react';
-import './App.css';
+import React from 'react'
+import './App.css'
 import examples from './Examples'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlay } from '@fortawesome/free-solid-svg-icons'
+import {Controlled as CodeMirror} from 'react-codemirror2'
+import 'codemirror/lib/codemirror.css'
+import {Helmet} from "react-helmet";
+
 
 const api = 'https://repl-api.bel-chime.com'
 
@@ -236,6 +240,7 @@ function App() {
         height: "100%",
         width: "100%",
         flexDirection: windowSize.width > windowSize.height ? "row" : "column",
+        position: "relative",
       }}
     >
       {/* Left panel */}
@@ -288,6 +293,7 @@ function App() {
                 flexDirection: "column",
                 border: `1px solid ${solarized.light.fg}`,
                 borderRadius: "2px",
+                zIndex: 1,
               }}>
                 {examples.map(({title, code}, i) => (
                   <div
@@ -354,7 +360,41 @@ function App() {
         {/* Left body */}
         <div style={{background: solarized.light.bg, ...style.body}}>
           {/* Text editor */}
-          <textarea
+          <Helmet>
+            <style>{`
+              .react-codemirror2 {
+                width: 100%;
+                flex-grow: 1;
+              }
+
+              .CodeMirror {
+                height: 100%;
+                background: inherit;
+                color: inherit;
+                font-family: inherit;
+                padding: 0 15px 15px 0;
+                z-index: 0;
+              }
+
+              .CodeMirror-cursor {
+                border-left: 1px solid ${solarized.light.fg};
+              }
+
+              .CodeMirror-lines {
+                padding-top: 15px;
+              }
+            `}</style>
+          </Helmet>
+          <CodeMirror
+            value={belCode}
+            options={{
+              lineNumbers: true,
+            }}
+            onBeforeChange={(_editor, _data, value) => {
+              setBelCode([value, false])
+            }}
+          />
+          {/* <textarea
             value={belCode}
             onChange={(event) => {
               setBelCode([event.target.value, false])
@@ -373,7 +413,7 @@ function App() {
             }}
             spellCheck="false"
           >
-          </textarea>
+          </textarea> */}
         </div>
       </div>
 
