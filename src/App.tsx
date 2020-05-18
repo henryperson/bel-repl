@@ -246,11 +246,16 @@ function App() {
       {/* Left panel */}
       <div style={{color: solarized.light.fg, ...style.panel}}>
         {/* Left top bar */}
-        <div style={{background: solarized.light.hl, justifyContent: "space-between", ...style.bar}}>
+        <div style={{
+          background: solarized.light.hl,
+          justifyContent: "space-between",
+          ...style.bar,
+          paddingRight: "6px",
+        }}>
           <span style={style.barTitle}>editor</span>
           {/* Buttons */}
           <div style={{display: "flex"}}>
-            {setLocal("buttonWidth", "25px")}
+            {setLocal("buttonWidth", "7px")}
             {/* Share */}
             <div
               style={style.button(shareHovered)}
