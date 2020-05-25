@@ -63,16 +63,20 @@ const style = {
   barTitle: {
     textTransform: "uppercase",
   },
-  panel: {
+  panel: isWide => ({
     display: "flex",
     flex: 1,
+    minWidth: "50%",
+    minHeight: "50%",
+    maxHeight: isWide ? "" : "50%",
     flexDirection: "column",
-  },
+  }),
   body: {
     flexGrow: 1,
     fontFamily: 'Monaco, Menlo, "Courier New", monospace',
     fontSize: "14px",
     display: "flex",
+    overflow: "scroll",
   },
   button: isHovered => ({
     textTransform: "uppercase",
@@ -228,279 +232,295 @@ function App() {
     }
   }, [pristine])
   const windowSize = useWindowSize()
+  const isWide = windowSize.width > windowSize.height
 
   let locals = {} as any
   const setLocal = (varName: string, val: any) => (locals[varName] = val) && null
 
   return (
-    // Main container
+    // Main container + footer
     <div
       style={{
+        height: "100vh",
+        width: "100vw",
         display: "flex",
-        height: "100%",
-        width: "100%",
-        flexDirection: windowSize.width > windowSize.height ? "row" : "column",
-        position: "relative",
+        flexDirection: "column",
       }}
     >
-      {/* Left panel */}
-      <div style={{color: solarized.light.fg, ...style.panel}}>
-        {/* Left top bar */}
-        <div style={{
-          background: solarized.light.hl,
-          justifyContent: "space-between",
-          ...style.bar,
-          paddingRight: "6px",
-        }}>
-          <span style={style.barTitle}>editor</span>
-          {/* Buttons */}
-          <div style={{display: "flex"}}>
-            {setLocal("buttonWidth", "7px")}
-            {/* Share */}
-            <div
-              style={style.button(shareHovered)}
-              ref={shareButton}
-              onClick={() => {
-                fetch(`${api}/share`, {
-                  method: 'POST',
-                  body: belCode,
-                }).then(resp => resp.json()).then(({share_id}) => {
-                  cachedPrograms[share_id] = belCode
-                  window.history.pushState(null, '', `/?p=${share_id}`)
-                  setBelCode([belCode, true])
-                })
-              }}
-            >
-              share
-            </div>
-            <Space width={locals.buttonWidth}/>
-            {/* Examples */}
-            <div
-              style={{display: "flex", flexDirection: "column", alignItems: "center"}}
-              ref={examplesDropdown}
-            >
+      {/* Main container */}
+      <div
+        style={{
+          display: "flex",
+          height: "100%",
+          width: "100%",
+          flexDirection: isWide ? "row" : "column",
+          position: "relative",
+          flex: 1,
+        }}
+      >
+        {/* Left panel */}
+        <div style={{color: solarized.light.fg, ...style.panel(isWide)}}>
+          {/* Left top bar */}
+          <div style={{
+            background: solarized.light.hl,
+            justifyContent: "space-between",
+            ...style.bar,
+            paddingRight: "6px",
+          }}>
+            <span style={style.barTitle}>editor</span>
+            {/* Buttons */}
+            <div style={{display: "flex"}}>
+              {setLocal("buttonWidth", "7px")}
+              {/* Share */}
               <div
-                style={style.button(examplesHovered)}
-                ref={examplesButton}
+                style={style.button(shareHovered)}
+                ref={shareButton}
                 onClick={() => {
-                  setShowExamplesDiv(!showExamplesDiv)
+                  fetch(`${api}/share`, {
+                    method: 'POST',
+                    body: belCode,
+                  }).then(resp => resp.json()).then(({share_id}) => {
+                    cachedPrograms[share_id] = belCode
+                    window.history.pushState(null, '', `/?p=${share_id}`)
+                    setBelCode([belCode, true])
+                  })
                 }}
               >
-                examples
+                share
               </div>
-              {showExamplesDiv &&
-              <div style={{
-                position: "absolute",
-                textTransform: "none",
-                top: style.bar.height,
-                background: "white",
-                display: "flex",
-                flexDirection: "column",
-                border: `1px solid ${solarized.light.fg}`,
-                borderRadius: "2px",
-                zIndex: 1,
-              }}>
-                {examples.map(({title, code}, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      height: "45px",
-                      width: "150px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      borderBottom: i !== examples.length-1 ? `1px solid ${solarized.light.fg}` : "",
-                      cursor: "pointer",
-                      ...(code === belCode ? {
-                        fontWeight: "bold",
-                        cursor: "default",
-                      } : {})
-                    }}
-                    onClick= {() => {
-                      setBelCode([code, false])
-                    }}
-                  >
-                    {title}
-                  </div>
-                ))}
+              <Space width={locals.buttonWidth}/>
+              {/* Examples */}
+              <div
+                style={{display: "flex", flexDirection: "column", alignItems: "center"}}
+                ref={examplesDropdown}
+              >
+                <div
+                  style={style.button(examplesHovered)}
+                  ref={examplesButton}
+                  onClick={() => {
+                    setShowExamplesDiv(!showExamplesDiv)
+                  }}
+                >
+                  examples
+                </div>
+                {showExamplesDiv &&
+                <div style={{
+                  position: "absolute",
+                  textTransform: "none",
+                  top: style.bar.height,
+                  background: "white",
+                  display: "flex",
+                  flexDirection: "column",
+                  border: `1px solid ${solarized.light.fg}`,
+                  borderRadius: "2px",
+                  zIndex: 1,
+                }}>
+                  {examples.map(({title, code}, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        height: "45px",
+                        width: "150px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderBottom: i !== examples.length-1 ? `1px solid ${solarized.light.fg}` : "",
+                        cursor: "pointer",
+                        ...(code === belCode ? {
+                          fontWeight: "bold",
+                          cursor: "default",
+                        } : {})
+                      }}
+                      onClick= {() => {
+                        setBelCode([code, false])
+                      }}
+                    >
+                      {title}
+                    </div>
+                  ))}
+                </div>
+                }
               </div>
-              }
+              <Space width={locals.buttonWidth}/>
+              {/* Run */}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  ...style.button(runHovered),
+                }}
+                ref={runButton}
+                onClick={() => {
+                  setCombinedState(({output}) => ({
+                    replInput: "",
+                    requestOutstanding: true,
+                    output,
+                    replState,
+                  }))
+                  fetch(`${api}/stateful-long`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                      expr: belCode,
+                      state: "",
+                    }),
+                  }).then(resp => resp.json()).then(({result, state}) => setCombinedState({
+                    output: [{type: "output", text: result}],
+                    replInput: "",
+                    requestOutstanding: false,
+                    replState: state,
+                  }))
+                }}
+              >
+                run <Space width="7px"/><FontAwesomeIcon style={{fontSize: "small"}} icon={faPlay} />
+              </div>
             </div>
-            <Space width={locals.buttonWidth}/>
-            {/* Run */}
-            <div
+
+          </div>
+
+          {/* Left body */}
+          <div style={{background: solarized.light.bg, ...style.body}}>
+            {/* Text editor */}
+            <Helmet>
+              <style>{`
+                .react-codemirror2 {
+                  width: 100%;
+                  flex-grow: 1;
+                }
+
+                .CodeMirror {
+                  height: 100%;
+                  background: inherit;
+                  color: inherit;
+                  font-family: inherit;
+                  padding: 0 15px 15px 0;
+                  z-index: 0;
+                }
+
+                .CodeMirror-cursor {
+                  border-left: 1px solid ${solarized.light.fg};
+                }
+
+                .CodeMirror-lines {
+                  padding-top: 15px;
+                }
+              `}</style>
+            </Helmet>
+            <CodeMirror
+              value={belCode}
+              options={{
+                lineNumbers: true,
+              }}
+              onBeforeChange={(_editor, _data, value) => {
+                setBelCode([value, false])
+              }}
+            />
+            {/* <textarea
+              value={belCode}
+              onChange={(event) => {
+                setBelCode([event.target.value, false])
+              }}
               style={{
-                display: "flex",
-                alignItems: "center",
-                ...style.button(runHovered),
+                resize: "none",
+                width: "100%",
+                margin: 0,
+                flexGrow: 1,
+                border: "none",
+                outline: "none",
+                fontSize: "inherit",
+                padding: "15px",
+                color: "inherit",
+                backgroundColor: "inherit",
               }}
-              ref={runButton}
-              onClick={() => {
-                setCombinedState(({output}) => ({
-                  replInput: "",
-                  requestOutstanding: true,
-                  output,
-                  replState,
-                }))
-                fetch(`${api}/stateful-long`, {
-                  method: 'POST',
-                  body: JSON.stringify({
-                    expr: belCode,
-                    state: "",
-                  }),
-                }).then(resp => resp.json()).then(({result, state}) => setCombinedState({
-                  output: [{type: "output", text: result}],
-                  replInput: "",
-                  requestOutstanding: false,
-                  replState: state,
-                }))
-              }}
+              spellCheck="false"
             >
-              run <Space width="7px"/><FontAwesomeIcon style={{fontSize: "small"}} icon={faPlay} />
-            </div>
+            </textarea> */}
+          </div>
+        </div>
+
+        {/* Right panel */}
+        <div style={{color: solarized.dark.fg, ...style.panel(isWide)}}>
+          {/* Right top bar */}
+          <div style={{background: solarized.dark.hl, ...style.bar}}>
+          <span style={{textTransform: "uppercase"}}>repl</span>
           </div>
 
-        </div>
-
-        {/* Left body */}
-        <div style={{background: solarized.light.bg, ...style.body}}>
-          {/* Text editor */}
-          <Helmet>
-            <style>{`
-              .react-codemirror2 {
-                width: 100%;
-                flex-grow: 1;
-              }
-
-              .CodeMirror {
-                height: 100%;
-                background: inherit;
-                color: inherit;
-                font-family: inherit;
-                padding: 0 15px 15px 0;
-                z-index: 0;
-              }
-
-              .CodeMirror-cursor {
-                border-left: 1px solid ${solarized.light.fg};
-              }
-
-              .CodeMirror-lines {
-                padding-top: 15px;
-              }
-            `}</style>
-          </Helmet>
-          <CodeMirror
-            value={belCode}
-            options={{
-              lineNumbers: true,
-            }}
-            onBeforeChange={(_editor, _data, value) => {
-              setBelCode([value, false])
-            }}
-          />
-          {/* <textarea
-            value={belCode}
-            onChange={(event) => {
-              setBelCode([event.target.value, false])
-            }}
-            style={{
-              resize: "none",
-              width: "100%",
-              margin: 0,
-              flexGrow: 1,
-              border: "none",
-              outline: "none",
-              fontSize: "inherit",
-              padding: "15px",
-              color: "inherit",
-              backgroundColor: "inherit",
-            }}
-            spellCheck="false"
-          >
-          </textarea> */}
-        </div>
-      </div>
-
-      {/* Right panel */}
-      <div style={{color: solarized.dark.fg, ...style.panel}}>
-        {/* Right top bar */}
-        <div style={{background: solarized.dark.hl, ...style.bar}}>
-        <span style={{textTransform: "uppercase"}}>repl</span>
-        </div>
-
-        {/* Right body */}
-        <div style={{background: solarized.dark.bg, ...style.body}}>
-          {/* Output window */}
-          <div style={{padding: "15px", width: "100%"}}>
-            {output.map(({type, text}, index) => {
-              switch (type) {
-                case "input":
-                  return <div key={index}>> {text}</div>
-                case "output":
-                  return <div style={{marginTop: 0, whiteSpace: "pre-wrap"}} key={index}>{text}</div>
-                default:
-                  return assertNever(type)
-              }
-            })}
-            {/* Repl */}
-            <div style={{display: "flex", alignItems: "center"}}>
-              {requestOutstanding ? null : <>
-                >&nbsp; <textarea
-                    rows={1}
-                    value={replInput}
-                    ref={replInputField}
-                    onChange={(event) => {
-                      // https://stackoverflow.com/a/44708693
-                      const value = event.target.value
-                      setCombinedState((currentState) => ({
-                        ...currentState,
-                        replInput: value,
-                      })
-                    )}}
-                    onKeyDown={(event) => {
-                      if (event.keyCode === 13) {
-                        event.preventDefault()
-                        setCombinedState(({output}) => ({
-                          output: [...output,  {type: "input", text: replInput}],
-                          replInput: "",
-                          requestOutstanding: true,
-                          replState: "",
-                        }))
-                        fetch(`${api}/stateful`, {
-                          method: 'POST',
-                          body: JSON.stringify({
-                            expr: replInput,
-                            state: replState,
-                          })
+          {/* Right body */}
+          <div style={{background: solarized.dark.bg, ...style.body}}>
+            {/* Output window */}
+            <div style={{padding: "15px", width: "100%"}}>
+              {output.map(({type, text}, index) => {
+                switch (type) {
+                  case "input":
+                    return <div key={index}>> {text}</div>
+                  case "output":
+                    return <div style={{marginTop: 0, whiteSpace: "pre-wrap"}} key={index}>{text}</div>
+                  default:
+                    return assertNever(type)
+                }
+              })}
+              {/* Repl */}
+              <div style={{display: "flex", alignItems: "center"}}>
+                {requestOutstanding ? null : <>
+                  >&nbsp; <textarea
+                      rows={1}
+                      value={replInput}
+                      ref={replInputField}
+                      onChange={(event) => {
+                        // https://stackoverflow.com/a/44708693
+                        const value = event.target.value
+                        setCombinedState((currentState) => ({
+                          ...currentState,
+                          replInput: value,
                         })
-                        .then((resp) => resp.json())
-                        .then(({result, state}) => setCombinedState(({output}) => ({
-                          output: [...output, {type: "output", text: result}],
-                          requestOutstanding: false,
-                          replInput: "",
-                          replState: state,
-                        })))
-                      }
-                    }}
-                    style={{
-                      flex: "1",
-                      background: solarized.dark.bg,
-                      border: "none",
-                      outline: "none",
-                      resize: "none",
-                      fontSize: "inherit",
-                      padding: "0",
-                      color: "inherit",
-                      margin: 0,
-                    }}
-                    spellCheck="false"
-                ></textarea>
-              </>}
+                      )}}
+                      onKeyDown={(event) => {
+                        if (event.keyCode === 13) {
+                          event.preventDefault()
+                          setCombinedState(({output}) => ({
+                            output: [...output,  {type: "input", text: replInput}],
+                            replInput: "",
+                            requestOutstanding: true,
+                            replState: "",
+                          }))
+                          fetch(`${api}/stateful`, {
+                            method: 'POST',
+                            body: JSON.stringify({
+                              expr: replInput,
+                              state: replState,
+                            })
+                          })
+                          .then((resp) => resp.json())
+                          .then(({result, state}) => setCombinedState(({output}) => ({
+                            output: [...output, {type: "output", text: result}],
+                            requestOutstanding: false,
+                            replInput: "",
+                            replState: state,
+                          })))
+                        }
+                      }}
+                      style={{
+                        flex: "1",
+                        background: solarized.dark.bg,
+                        border: "none",
+                        outline: "none",
+                        resize: "none",
+                        fontSize: "inherit",
+                        padding: "0",
+                        color: "inherit",
+                        margin: 0,
+                      }}
+                      spellCheck="false"
+                  ></textarea>
+                </>}
+              </div>
             </div>
           </div>
         </div>
       </div>
+      <footer>
+          Powered by&nbsp;
+          <a id="chime-repo" href="https://github.com/jeremyschlatter/chime">Chime</a>
+      </footer>
     </div>
   );
 }
