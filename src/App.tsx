@@ -5,6 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlay } from '@fortawesome/free-solid-svg-icons'
 import {Controlled as CodeMirror} from 'react-codemirror2'
 import 'codemirror/lib/codemirror.css'
+import './solarized.css'
+import './bel'
 import {Helmet} from "react-helmet";
 
 
@@ -408,6 +410,8 @@ function App() {
             <CodeMirror
               value={belCode}
               options={{
+                mode: "bel",
+                theme: "solarized",
                 lineNumbers: true,
               }}
               onBeforeChange={(_editor, _data, value) => {
