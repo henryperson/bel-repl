@@ -1,7 +1,7 @@
 export default [
     {
       title: "hello world",
-      code: "(cons 'hello 'world)",
+      code: "(cons 'hello 'world) ",
     },
     {
       title: "fibonacci",
@@ -14,7 +14,7 @@ export default [
           (set l (cons (+ (car l) (cadr l)) l)))
         (rev l))))
 
-(fib 10)`
+(fib 10) `
     },
     {
       title: "quicksort",
@@ -41,6 +41,6 @@ export default [
   l)
 
 (quicksort l)
-(prn l)`
+(prn l) `
     }
 ]
