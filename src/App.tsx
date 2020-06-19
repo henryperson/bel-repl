@@ -4,6 +4,7 @@ import examples from './Examples'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlay } from '@fortawesome/free-solid-svg-icons'
 import {Controlled as CodeMirror} from 'react-codemirror2'
+import 'codemirror/addon/edit/matchbrackets'
 import 'codemirror/lib/codemirror.css'
 import './solarized.css'
 import './bel'
@@ -413,31 +414,12 @@ function App() {
                 mode: "bel",
                 theme: "solarized",
                 lineNumbers: true,
+                matchBrackets: true,
               }}
               onBeforeChange={(_editor, _data, value) => {
                 setBelCode([value, false])
               }}
             />
-            {/* <textarea
-              value={belCode}
-              onChange={(event) => {
-                setBelCode([event.target.value, false])
-              }}
-              style={{
-                resize: "none",
-                width: "100%",
-                margin: 0,
-                flexGrow: 1,
-                border: "none",
-                outline: "none",
-                fontSize: "inherit",
-                padding: "15px",
-                color: "inherit",
-                backgroundColor: "inherit",
-              }}
-              spellCheck="false"
-            >
-            </textarea> */}
           </div>
         </div>
 
@@ -455,7 +437,7 @@ function App() {
               {output.map(({type, text}, index) => {
                 switch (type) {
                   case "input":
-                    return <div key={index}>> {text}</div>
+                    return <div key={index}>&gt; {text}</div>
                   case "output":
                     return <div style={{marginTop: 0, whiteSpace: "pre-wrap"}} key={index}>{text}</div>
                   default:
@@ -465,7 +447,7 @@ function App() {
               {/* Repl */}
               <div style={{display: "flex", alignItems: "center"}}>
                 {requestOutstanding ? null : <>
-                  >&nbsp; <textarea
+                  &gt;&nbsp; <textarea
                       rows={1}
                       value={replInput}
                       ref={replInputField}
