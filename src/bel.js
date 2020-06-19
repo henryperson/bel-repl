@@ -15,7 +15,26 @@ CodeMirror.defineMode("bel", () => {
         return new RegExp(`¦(${word})¦|(${word})`)
     })()
 
-    const userDefinedSymbolToken = null
+    const token = {
+        pair: "operator",
+        comment: "comment",
+        misc: "quote",
+        sharedList: "variable-2",
+        string: "string",
+        squareBracket: "bracket",
+        character: "string-2",
+        number: "number",
+        symbol: {
+            constant: "number",
+            primitive: "keyword",
+            builtInVar: "meta",
+            specialForm: "special",
+            predefinedOp: "property",
+            underscore: "bracket",
+            userDefined: null,
+        },
+        intraSymbolOperator: null,
+    }
 
     const defaultMode = (stream, state) => {
         if (stream.eatSpace()) {
@@ -23,27 +42,46 @@ CodeMirror.defineMode("bel", () => {
         }
         // Pair syntax
         if (stream.match(/[()]|\. /)) {
-            return "operator"
+            return token.pair
         }
         // Comments
         if (stream.match(/;.*/)) {
-            return "comment"
+            return token.comment
+        }
+        // Misc
+        if (stream.match(/,@|,|`|'/)) {
+            return token.misc
+        }
+        // Shared list
+        if (stream.match(/#[0-9]+=?/)) {
+            return token.sharedList
         }
         // Strings
         if (stream.match(/"/)) {
             state.stringMode = true
-            return "string"
+            return token.string
+        }
+        // Function literals
+        if (stream.eat(/\[/)) {
+            state.literalDepth += 1
+            return token.squareBracket
+        }
+        if (stream.eat(/\]/)) {
+            if (state.literalDepth > 0) {
+                state.literalDepth -= 1
+            }
+            return token.squareBracket
         }
         // Characters
         if (stream.match(characterRE)) {
-            return "string-2"
+            return token.character
         }
         // Numbers
         if (stream.match(numberRE)) {
             if (stream.eat(/\w/)) {
                 stream.backUp(stream.current().length)
             } else {
-                return "number"
+                return token.number
             }
         }
         // Symbols
@@ -52,26 +90,28 @@ CodeMirror.defineMode("bel", () => {
             const word = res[1] || res[2]
             switch (true) {
                 case constants.has(word):
-                    return "keyword"
+                    return token.symbol.constant
                 case primitives.has(word):
-                    return "builtin"
+                    return token.symbol.primitive
                 case builtInVars.has(word):
-                    return "meta"
+                    return token.symbol.builtInVar
                 case specialForms.has(word):
-                    return "special"
+                    return token.symbol.specialForm
                 case predefinedOps.has(word):
-                    return `variable-3`
+                    return token.symbol.predefinedOp
+                case word === "_" && state.literalDepth > 0:
+                    return token.symbol.underscore
                 default:
-                    return userDefinedSymbolToken
+                    return token.symbol.userDefined
             }
         }
         // Symbols
         if (stream.eat(/¦/)) {
             state.complexSymbolMode = true
-            return userDefinedSymbolToken
+            return token.symbol.userDefined
         }
         if (stream.eat(/\.|!|:|~|\|/)) {
-            return null
+            return token.intraSymbolOperator
         }
         stream.next()
         return null
@@ -79,13 +119,13 @@ CodeMirror.defineMode("bel", () => {
     const stringMode = (stream, state) => {
         if (stream.eat(/"/)) {
             state.stringMode = false
-            return "string"
+            return token.string
         }
         if (stream.match(characterRE)) {
-            return "string-2"
+            return token.character
         }
         stream.next()
-        return "string"
+        return token.string
     }
     const complexSymbolMode = (stream, state) => {
         if (stream.eat(/¦/)) {
@@ -93,13 +133,14 @@ CodeMirror.defineMode("bel", () => {
         } else {
             stream.next()
         }
-        return userDefinedSymbolToken
+        return token.symbol.userDefined
     }
     return {
         startState: () => ({
             stringMode: false,
             complexSymbolMode: false,
             counter: 0,
+            literalDepth: 0,
         }),
         token: (stream, state) => {
             if (state.stringMode) {
