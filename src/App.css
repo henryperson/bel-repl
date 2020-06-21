@@ -20,3 +20,7 @@ html {
   height: 100%;
   background: #fdf6e3; /* solarized.light.bg */
 }
+
+.repl-body ::selection {
+  background: rgba(7, 54, 66, 0.99);
+}

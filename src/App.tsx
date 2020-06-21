@@ -404,7 +404,7 @@ function App() {
                 }
 
                 .CodeMirror-lines {
-                  padding-top: 15px;
+                  padding-top: 4px;
                 }
               `}</style>
             </Helmet>
@@ -412,7 +412,7 @@ function App() {
               value={belCode}
               options={{
                 mode: "bel",
-                theme: "solarized",
+                theme: "solarized light",
                 lineNumbers: true,
                 matchBrackets: true,
               }}
@@ -431,9 +431,9 @@ function App() {
           </div>
 
           {/* Right body */}
-          <div style={{background: solarized.dark.bg, ...style.body}}>
+          <div className="repl-body" style={{background: solarized.dark.bg, ...style.body}}>
             {/* Output window */}
-            <div style={{padding: "15px", width: "100%"}}>
+            <div style={{padding: "4px 10px", width: "100%"}}>
               {output.map(({type, text}, index) => {
                 switch (type) {
                   case "input":
