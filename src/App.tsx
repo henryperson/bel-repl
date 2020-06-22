@@ -80,6 +80,7 @@ const style = {
     fontSize: "14px",
     display: "flex",
     overflow: "scroll",
+    flexBasis: 0,
   },
   button: isHovered => ({
     textTransform: "uppercase",
@@ -201,7 +202,7 @@ function App() {
   const [runButton, runHovered] = useHover()
   const [examplesButton, examplesHovered] = useHover()
 
-  const replInputField = React.useRef() as React.RefObject<HTMLTextAreaElement>
+  const replInputField = React.useRef() as React.RefObject<HTMLSpanElement>
   React.useEffect(() => {
     if (!requestOutstanding) {
       replInputField.current?.focus()
@@ -254,8 +255,6 @@ function App() {
       <div
         style={{
           display: "flex",
-          height: "100%",
-          width: "100%",
           flexDirection: isWide ? "row" : "column",
           position: "relative",
           flex: 1,
@@ -437,7 +436,7 @@ function App() {
               {output.map(({type, text}, index) => {
                 switch (type) {
                   case "input":
-                    return <div key={index}>&gt; {text}</div>
+                    return <div style={{whiteSpace: "pre-wrap"}} key={index}>&gt; {text}</div>
                   case "output":
                     return <div style={{marginTop: 0, whiteSpace: "pre-wrap"}} key={index}>{text}</div>
                   default:
@@ -447,18 +446,19 @@ function App() {
               {/* Repl */}
               <div style={{display: "flex", alignItems: "center"}}>
                 {requestOutstanding ? null : <>
-                  &gt;&nbsp; <textarea
-                      rows={1}
-                      value={replInput}
+                  &gt;&nbsp; <span
+                      contentEditable="true"
                       ref={replInputField}
-                      onChange={(event) => {
+                      onInput={() => {
                         // https://stackoverflow.com/a/44708693
-                        const value = event.target.value
-                        setCombinedState((currentState) => ({
-                          ...currentState,
+                        if (replInputField.current !== null) {
+                          const value = replInputField.current.innerHTML
+                          setCombinedState((currentState) => ({
+                            ...currentState,
                           replInput: value,
-                        })
-                      )}}
+                          }))
+                        }
+                      }}
                       onKeyDown={(event) => {
                         if (event.keyCode === 13) {
                           event.preventDefault()
@@ -485,7 +485,6 @@ function App() {
                         }
                       }}
                       style={{
-                        flex: "1",
                         background: solarized.dark.bg,
                         border: "none",
                         outline: "none",
@@ -494,16 +493,24 @@ function App() {
                         padding: "0",
                         color: "inherit",
                         margin: 0,
+                        width: "100%",
+                        whiteSpace: "nowrap",
                       }}
                       spellCheck="false"
-                  ></textarea>
+                  >
+                  </span>
                 </>}
               </div>
             </div>
           </div>
         </div>
       </div>
-      <footer>
+      <footer style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flex: "0 0 44px",
+      }}>
           Powered by&nbsp;
           <a id="chime-repo" href="https://github.com/jeremyschlatter/chime">Chime</a>
       </footer>

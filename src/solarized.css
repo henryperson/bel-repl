@@ -123,6 +123,7 @@ http://ethanschoonover.com/solarized/img/solarized-palette.png
   background-color: #eee8d5;
   border-right: 1px solid #ddd;
   border-top: 1px solid #ddd;
+  box-sizing: border-box;
 }
 
 .cm-s-solarized.cm-s-light .CodeMirror-linenumber {
