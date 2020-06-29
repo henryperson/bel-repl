@@ -241,6 +241,31 @@ function App() {
   let locals = {} as any
   const setLocal = (varName: string, val: any) => (locals[varName] = val) && null
 
+  const runEditorCode = () => {
+    if (document.activeElement instanceof HTMLElement) {
+      const active = document.activeElement as HTMLElement
+      active.blur()
+    }
+    setCombinedState(({output}) => ({
+      replInput: "",
+      requestOutstanding: true,
+      output,
+      replState,
+    }))
+    fetch(`${api}/stateful-long`, {
+      method: 'POST',
+      body: JSON.stringify({
+        expr: belCode,
+        state: "",
+      }),
+    }).then(resp => resp.json()).then(({result, state}) => setCombinedState({
+      output: [{type: "output", text: result}],
+      replInput: "",
+      requestOutstanding: false,
+      replState: state,
+    }))
+}
+
   return (
     // Main container + footer
     <div
@@ -352,26 +377,7 @@ function App() {
                   ...style.button(runHovered),
                 }}
                 ref={runButton}
-                onClick={() => {
-                  setCombinedState(({output}) => ({
-                    replInput: "",
-                    requestOutstanding: true,
-                    output,
-                    replState,
-                  }))
-                  fetch(`${api}/stateful-long`, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                      expr: belCode,
-                      state: "",
-                    }),
-                  }).then(resp => resp.json()).then(({result, state}) => setCombinedState({
-                    output: [{type: "output", text: result}],
-                    replInput: "",
-                    requestOutstanding: false,
-                    replState: state,
-                  }))
-                }}
+                onClick={runEditorCode}
               >
                 run <Space width="7px"/><FontAwesomeIcon style={{fontSize: "small"}} icon={faPlay} />
               </div>
@@ -414,6 +420,10 @@ function App() {
                 theme: "solarized light",
                 lineNumbers: true,
                 matchBrackets: true,
+                extraKeys: {
+                  "Shift-Enter": runEditorCode,
+                  "Cmd-Enter": runEditorCode,
+                },
               }}
               onBeforeChange={(_editor, _data, value) => {
                 setBelCode([value, false])
