@@ -462,7 +462,7 @@ function App() {
                       onInput={() => {
                         // https://stackoverflow.com/a/44708693
                         if (replInputField.current !== null) {
-                          const value = replInputField.current.innerHTML
+                          const value = replInputField.current.innerText
                           setCombinedState((currentState) => ({
                             ...currentState,
                           replInput: value,
